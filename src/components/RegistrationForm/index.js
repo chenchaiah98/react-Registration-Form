@@ -1,39 +1,48 @@
-// Write your JS code here
 import {Component} from 'react'
+
 import './index.css'
 
 class RegistrationForm extends Component {
   state = {
-    firstName: '',
-    lastName: '',
+    firstNameInput: '',
+    lastNameInput: '',
     showFirstNameError: false,
     showLastNameError: false,
-    isFormSubmit: false,
+    isFormSubmitted: false,
   }
 
   onBlurLastName = () => {
     const isValidLastName = this.validateLastName()
+
     this.setState({showLastNameError: !isValidLastName})
   }
 
   onChangeLastName = event => {
-    this.setState({lastName: event.target.value})
+    const {target} = event
+    const {value} = target
+
+    this.setState({
+      lastNameInput: value,
+    })
   }
 
   renderLastNameField = () => {
-    const {lastname, showLastNameError} = this.state
-    const className = showLastNameError ? `input-name border-red` : 'input-name'
+    const {lastNameInput, showLastNameError} = this.state
+    const className = showLastNameError
+      ? 'name-input-field error-field'
+      : 'name-input-field'
 
     return (
-      <div>
-        <label htmlFor="lastName">Last Name</label>
-        <br />
+      <div className="input-container">
+        <label className="input-label" htmlFor="lastName">
+          LAST NAME
+        </label>
         <input
           type="text"
-          name="lastName"
+          id="lastName"
           className={className}
-          placeholder="kumar"
-          value={lastname}
+          value={lastNameInput}
+          placeholder="Last name"
           onChange={this.onChangeLastName}
           onBlur={this.onBlurLastName}
         />
@@ -43,74 +52,82 @@ class RegistrationForm extends Component {
 
   onBlurFirstName = () => {
     const isValidFirstName = this.validateFirstName()
+
     this.setState({showFirstNameError: !isValidFirstName})
   }
 
   onChangeFirstName = event => {
-    this.setState({firstName: event.target.value})
+    const {target} = event
+    const {value} = target
+
+    this.setState({
+      firstNameInput: value,
+    })
   }
 
   renderFirstNameField = () => {
-    const {firstName, showFirstNameError} = this.state
+    const {firstNameInput, showFirstNameError} = this.state
     const className = showFirstNameError
-      ? `input-name border-red`
-      : 'input-name'
+      ? 'name-input-field error-field'
+      : 'name-input-field'
 
     return (
-      <div>
-        <label htmlFor="firstName">FirstName</label>
+      <div className="input-container">
+        <label className="input-label" htmlFor="firstName">
+          FIRST NAME
+        </label>
         <input
           type="text"
-          name="fistName"
+          id="firstName"
           className={className}
-          placeholder="ram"
-          required
+          value={firstNameInput}
+          placeholder="First name"
           onChange={this.onChangeFirstName}
-          value={firstName}
+          onBlur={this.onBlurFirstName}
         />
       </div>
     )
   }
 
   validateLastName = () => {
-    const {lastName} = this.state
-    return lastName !== ''
+    const {lastNameInput} = this.state
+
+    return lastNameInput !== ''
   }
 
   validateFirstName = () => {
-    const {firstName} = this.state
-    return firstName !== ''
+    const {firstNameInput} = this.state
+
+    return firstNameInput !== ''
   }
 
-  onsubmit = e => {
-    e.preventDefault()
+  onSubmitForm = event => {
+    event.preventDefault()
     const isValidFirstName = this.validateFirstName()
     const isValidLastName = this.validateLastName()
 
     if (isValidFirstName && isValidLastName) {
-      this.setState({isFormSubmit: true})
-      console.log('success')
+      this.setState({isFormSubmitted: true})
     } else {
       this.setState({
         showFirstNameError: !isValidFirstName,
         showLastNameError: !isValidLastName,
-        isFormSubmit: false,
+        isFormSubmitted: false,
       })
-      console.log('error')
     }
   }
 
   renderRegistrationForm = () => {
-    const {showLastNameError, showFirstNameError} = this.state
+    const {showFirstNameError, showLastNameError} = this.state
+
     return (
-      <form className="form">
+      <form className="form-container" onSubmit={this.onSubmitForm}>
         {this.renderFirstNameField()}
-        {showFirstNameError && <p className="text-red">require</p>}
-        <br />
+        {showFirstNameError && <p className="error-message">Required</p>}
         {this.renderLastNameField()}
-        {showLastNameError && <p className="text-red">require</p>}
-        <button className="button" type="button" onClick={this.onsubmit}>
-          submit
+        {showLastNameError && <p className="error-message">Required</p>}
+        <button type="submit" className="submit-button">
+          Submit
         </button>
       </form>
     )
@@ -118,38 +135,39 @@ class RegistrationForm extends Component {
 
   onClickSubmitAnotherResponse = () => {
     this.setState(prevState => ({
-      isFormSubmit: !prevState.isFormSubmit,
-      firstName: '',
-      lastName: '',
+      isFormSubmitted: !prevState.isFormSubmitted,
+      firstNameInput: '',
+      lastNameInput: '',
     }))
   }
 
-  renderSubmissionSuccess = () => (
+  renderSubmissionSuccessView = () => (
     <>
       <img
         src="https://assets.ccbp.in/frontend/react-js/success-icon-img.png"
         alt="success"
+        className="success-image"
       />
-      <p>Submited succesfully</p>
+      <p>Submitted Successfully</p>
       <button
         type="button"
+        className="submit-button"
         onClick={this.onClickSubmitAnotherResponse}
-        className="button"
       >
-        submit another response
+        Submit Another Response
       </button>
     </>
   )
 
   render() {
-    const {isFormSubmit} = this.state
+    const {isFormSubmitted} = this.state
 
     return (
-      <div className="main-app-container">
-        <h1 className="main-heading">Registration</h1>
-        <div className="form-main-container">
-          {isFormSubmit
-            ? this.renderSubmissionSuccess()
+      <div className="registration-form-container">
+        <h1 className="form-title">Registration</h1>
+        <div className="view-container">
+          {isFormSubmitted
+            ? this.renderSubmissionSuccessView()
             : this.renderRegistrationForm()}
         </div>
       </div>
